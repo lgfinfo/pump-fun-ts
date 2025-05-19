@@ -1,0 +1,94 @@
+import * as _coral_xyz_anchor from '@coral-xyz/anchor';
+import { BN } from '@coral-xyz/anchor';
+import { Connection, PublicKey, TransactionInstruction } from '@solana/web3.js';
+import { D as DepositBaseResult, b as DepositQuoteResult, W as WithdrawResult, B as BuyBaseInputResult, g as BuyQuoteInputResult, S as SellBaseInputResult, h as SellQuoteInputResult } from '../sdk-BELsphs6.mjs';
+import 'bn.js';
+
+declare const POOL_ACCOUNT_NEW_SIZE = 300;
+declare class PumpAmmInternalSdk {
+    private readonly connection;
+    private readonly program;
+    private readonly globalConfig;
+    constructor(connection: Connection, programId?: string);
+    coder(): _coral_xyz_anchor.Coder<string, string>;
+    programId(): PublicKey;
+    globalConfigKey(): PublicKey;
+    poolKey(index: number, creator: PublicKey, baseMint: PublicKey, quoteMint: PublicKey): [PublicKey, number];
+    lpMintKey(pool: PublicKey): [PublicKey, number];
+    fetchGlobalConfigAccount(): Promise<{
+        admin: PublicKey;
+        lpFeeBasisPoints: BN;
+        protocolFeeBasisPoints: BN;
+        disableFlags: number;
+        protocolFeeRecipients: PublicKey[];
+        coinCreatorFeeBasisPoints: BN;
+    }>;
+    fetchPool(pool: PublicKey): Promise<{
+        poolBump: number;
+        index: number;
+        creator: PublicKey;
+        baseMint: PublicKey;
+        quoteMint: PublicKey;
+        lpMint: PublicKey;
+        poolBaseTokenAccount: PublicKey;
+        poolQuoteTokenAccount: PublicKey;
+        lpSupply: BN;
+        coinCreator: PublicKey;
+    }>;
+    createPoolInstructionsInternal(index: number, creator: PublicKey, baseMint: PublicKey, quoteMint: PublicKey, baseIn: BN, quoteIn: BN, userBaseTokenAccount?: PublicKey | undefined, userQuoteTokenAccount?: PublicKey | undefined): Promise<TransactionInstruction[]>;
+    depositInstructionsInternal(pool: PublicKey, lpToken: BN, maxBase: BN, maxQuote: BN, user: PublicKey, userBaseTokenAccount?: PublicKey | undefined, userQuoteTokenAccount?: PublicKey | undefined, userPoolTokenAccount?: PublicKey | undefined): Promise<TransactionInstruction[]>;
+    private withWsolAccounts;
+    private withWsolAccount;
+    private accountExists;
+    depositBaseInputInternal(pool: PublicKey, base: BN, slippage: number): Promise<DepositBaseResult>;
+    depositQuoteInputInternal(pool: PublicKey, quote: BN, slippage: number): Promise<DepositQuoteResult>;
+    withdrawInstructionsInternal(pool: PublicKey, lpTokenAmountIn: BN, minBaseAmountOut: BN, minQuoteAmountOut: BN, user: PublicKey, userBaseTokenAccount?: PublicKey | undefined, userQuoteTokenAccount?: PublicKey | undefined, userPoolTokenAccount?: PublicKey | undefined): Promise<TransactionInstruction[]>;
+    withdrawInputsInternal(pool: PublicKey, lpAmount: BN, slippage: number): Promise<WithdrawResult>;
+    getPoolBaseAndQuoteAmounts(pool: PublicKey): Promise<{
+        fetchedPool: {
+            poolBump: number;
+            index: number;
+            creator: PublicKey;
+            baseMint: PublicKey;
+            quoteMint: PublicKey;
+            lpMint: PublicKey;
+            poolBaseTokenAccount: PublicKey;
+            poolQuoteTokenAccount: PublicKey;
+            lpSupply: BN;
+            coinCreator: PublicKey;
+        };
+        poolBaseAmount: BN;
+        poolQuoteAmount: BN;
+    }>;
+    private liquidityAccounts;
+    buyInstructionsInternal(pool: PublicKey, baseOut: BN, maxQuoteIn: BN, user: PublicKey, protocolFeeRecipient?: PublicKey | undefined, userBaseTokenAccount?: PublicKey | undefined, userQuoteTokenAccount?: PublicKey | undefined): Promise<TransactionInstruction[]>;
+    buyInstructionsInternalNoPool(index: number, creator: PublicKey, baseMint: PublicKey, quoteMint: PublicKey, baseOut: BN, maxQuoteIn: BN, user: PublicKey, coinCreator: PublicKey, protocolFeeRecipient?: PublicKey | undefined, userBaseTokenAccount?: PublicKey | undefined, userQuoteTokenAccount?: PublicKey | undefined): Promise<TransactionInstruction[]>;
+    buyBaseInput(pool: PublicKey, base: BN, slippage: number, user: PublicKey, protocolFeeRecipient?: PublicKey | undefined, userBaseTokenAccount?: PublicKey | undefined, userQuoteTokenAccount?: PublicKey | undefined): Promise<TransactionInstruction[]>;
+    buyQuoteInput(pool: PublicKey, quote: BN, slippage: number, user: PublicKey, protocolFeeRecipient?: PublicKey | undefined, userBaseTokenAccount?: PublicKey | undefined, userQuoteTokenAccount?: PublicKey | undefined): Promise<TransactionInstruction[]>;
+    buyAutocompleteQuoteFromBase(pool: PublicKey, base: BN, slippage: number): Promise<BN>;
+    buyAutocompleteBaseFromQuote(pool: PublicKey, quote: BN, slippage: number): Promise<BN>;
+    buyBaseInputInternal(pool: PublicKey, base: BN, slippage: number): Promise<BuyBaseInputResult>;
+    buyQuoteInputInternal(pool: PublicKey, quote: BN, slippage: number): Promise<BuyQuoteInputResult>;
+    buyQuoteInputInternalNoPool(quote: BN, slippage: number, poolBaseAmount: BN, poolQuoteAmount: BN, coinCreator: PublicKey): Promise<BuyQuoteInputResult>;
+    sellInstructionsInternal(pool: PublicKey, baseAmountIn: BN, minQuoteAmountOut: BN, user: PublicKey, protocolFeeRecipient?: PublicKey | undefined, userBaseTokenAccount?: PublicKey | undefined, userQuoteTokenAccount?: PublicKey | undefined): Promise<TransactionInstruction[]>;
+    fixPoolInstructions(pool: PublicKey, user: PublicKey): Promise<TransactionInstruction[]>;
+    private withFixPoolInstructions;
+    sellInstructionsInternalNoPool(index: number, creator: PublicKey, baseMint: PublicKey, quoteMint: PublicKey, baseAmountIn: BN, minQuoteAmountOut: BN, user: PublicKey, coinCreator: PublicKey, protocolFeeRecipient?: PublicKey | undefined, userBaseTokenAccount?: PublicKey | undefined, userQuoteTokenAccount?: PublicKey | undefined): Promise<TransactionInstruction[]>;
+    sellBaseInput(pool: PublicKey, base: BN, slippage: number, user: PublicKey, protocolFeeRecipient?: PublicKey | undefined, userBaseTokenAccount?: PublicKey | undefined, userQuoteTokenAccount?: PublicKey | undefined): Promise<TransactionInstruction[]>;
+    sellQuoteInput(pool: PublicKey, quote: BN, slippage: number, user: PublicKey, protocolFeeRecipient?: PublicKey | undefined, userBaseTokenAccount?: PublicKey | undefined, userQuoteTokenAccount?: PublicKey | undefined): Promise<TransactionInstruction[]>;
+    sellAutocompleteQuoteFromBase(pool: PublicKey, base: BN, slippage: number): Promise<BN>;
+    sellAutocompleteBaseFromQuote(pool: PublicKey, quote: BN, slippage: number): Promise<BN>;
+    sellBaseInputInternal(pool: PublicKey, base: BN, slippage: number): Promise<SellBaseInputResult>;
+    sellBaseInputInternalNoPool(base: BN, slippage: number, poolBaseAmount: BN, poolQuoteAmount: BN, coinCreator: PublicKey): Promise<SellBaseInputResult>;
+    sellQuoteInputInternal(pool: PublicKey, quote: BN, slippage: number): Promise<SellQuoteInputResult>;
+    extendAccount(account: PublicKey, user: PublicKey): Promise<TransactionInstruction>;
+    collectCoinCreatorFee(coinCreator: PublicKey, coinCreatorTokenAccount?: PublicKey | undefined): Promise<TransactionInstruction[]>;
+    getCoinCreatorVaultBalance(coinCreator: PublicKey): Promise<BN>;
+    setCoinCreator(pool: PublicKey): Promise<TransactionInstruction>;
+    private swapAccounts;
+    coinCreatorVaultAuthorityPda(coinCreator: PublicKey): PublicKey;
+    coinCreatorVaultAta(coinCreatorVaultAuthority: PublicKey, quoteMint: PublicKey, quoteTokenProgram: PublicKey): PublicKey;
+    private getMintTokenPrograms;
+}
+
+export { POOL_ACCOUNT_NEW_SIZE, PumpAmmInternalSdk };
